@@ -1,45 +1,35 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useTheme } from "../context/ThemeContext.jsx"; 
 import { useState, useEffect, useRef } from "react";
-// 🆕 Added Scale (Terms) and Lock (Privacy) icons
-import { LogOut, Sun, Moon, User, Settings as SettingsIcon, MoreVertical, Scale, Lock } from "lucide-react"; 
+import { LogOut, Sun, Moon, User, Settings as SettingsIcon, MoreVertical } from "lucide-react"; 
+// Removed Scale and Lock icons as they are no longer needed in the dropdown
 
 export default function Navbar() {
     const { user, logout } = useAuth();
+    const { darkMode, toggleTheme } = useTheme(); 
     const navigate = useNavigate();
     const location = useLocation();
     
-    // State to control the dropdown visibility
     const [isMenuOpen, setIsMenuOpen] = useState(false); 
     const menuRef = useRef(null); 
 
     const handleLogout = () => {
         logout();
         navigate("/login");
-        setIsMenuOpen(false); // Close menu on logout
+        setIsMenuOpen(false);
     };
 
     const navLinks = [
         { name: "Home", path: "/" },
         { name: "Tasks", path: "/tasks" },
         { name: "Profile", path: "/profile" },
-        { name: "About", path: "/about" }, // ✅ ADDED ABOUT LINK
+        { name: "About", path: "/about" }, 
+        // ADDED Terms and Privacy to the main navigation array
+        { name: "Terms", path: "/terms" }, 
+        { name: "Privacy", path: "/privacy" }, 
     ];
 
-    // Dark/Light mode toggle (Unchanged)
-    const [darkMode, setDarkMode] = useState(
-        () => localStorage.getItem("darkMode") === "true"
-    );
-
-    useEffect(() => {
-        if (darkMode) document.documentElement.classList.add("dark");
-        else document.documentElement.classList.remove("dark");
-        localStorage.setItem("darkMode", darkMode);
-    }, [darkMode]);
-
-    const toggleDarkMode = () => setDarkMode(!darkMode);
-
-    // Effect to handle closing the menu when clicking outside
     useEffect(() => {
         function handleClickOutside(event) {
             if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -58,7 +48,6 @@ export default function Navbar() {
             
             <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-center">
                 
-                {/* 1. Left Section: Logo/Name (Unchanged) */}
                 <Link
                     to="/"
                     className="flex items-center space-x-2 text-2xl font-extrabold text-green-600 dark:text-green-400 tracking-tight absolute left-6 top-1/2 transform -translate-y-1/2"
@@ -67,7 +56,6 @@ export default function Navbar() {
                     <span>ErrandX</span>
                 </Link>
 
-                {/* 2. Center Section: Navigation Links (UPDATED) */}
                 <div className="flex gap-8 text-lg">
                     {navLinks.map((link) => (
                         <Link
@@ -84,12 +72,10 @@ export default function Navbar() {
                     ))}
                 </div>
 
-                {/* 3. Right Section: User/Login + Dark Mode */}
                 <div className="flex items-center gap-3 absolute right-6 top-1/2 transform -translate-y-1/2">
                     
-                    {/* Dark/Light Toggle (Unchanged) */}
                     <button
-                        onClick={toggleDarkMode}
+                        onClick={toggleTheme}
                         className="p-2 rounded-full text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
                         aria-label="Toggle Dark Mode"
                     >
@@ -97,10 +83,8 @@ export default function Navbar() {
                     </button>
 
                     {user ? (
-                        /* 🆕 DROPDOWN MENU IMPLEMENTATION (UPDATED) */
                         <div ref={menuRef} className="relative inline-block text-left">
                             
-                            {/* Dropdown Trigger (Three Dots) */}
                             <button
                                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                                 className="p-2 rounded-full text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition focus:outline-none"
@@ -109,7 +93,6 @@ export default function Navbar() {
                                 <MoreVertical className="w-6 h-6" />
                             </button>
 
-                            {/* Dropdown Content */}
                             {isMenuOpen && (
                                 <div 
                                     className="origin-top-right absolute right-0 mt-2 w-56 rounded-lg shadow-2xl bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 dark:divide-gray-700 focus:outline-none"
@@ -117,7 +100,6 @@ export default function Navbar() {
                                     aria-orientation="vertical" 
                                     aria-labelledby="menu-button"
                                 >
-                                    {/* 1. Logged-in User Name */}
                                     <div className="py-1 px-4">
                                         <div className="block px-4 py-2 text-sm text-gray-500 dark:text-gray-400 font-semibold truncate">
                                             <User className="inline-block w-4 h-4 mr-2 text-green-500" />
@@ -125,7 +107,6 @@ export default function Navbar() {
                                         </div>
                                     </div>
                                     
-                                    {/* 2. Menu Items */}
                                     <div className="py-1">
                                         <Link 
                                             to="/settings" 
@@ -137,30 +118,10 @@ export default function Navbar() {
                                             Account Settings
                                         </Link>
 
-                                        {/* ⚖️ TERMS OPTION ADDED */}
-                                        <Link 
-                                            to="/terms" 
-                                            onClick={() => setIsMenuOpen(false)}
-                                            className="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                                            role="menuitem"
-                                        >
-                                            <Scale className="w-4 h-4 mr-3 text-gray-500 dark:text-gray-400" />
-                                            Terms
-                                        </Link>
+                                        {/* REMOVED: Terms and Privacy links from the dropdown here */}
 
-                                        {/* 🔒 PRIVACY OPTION ADDED */}
-                                        <Link 
-                                            to="/privacy" 
-                                            onClick={() => setIsMenuOpen(false)}
-                                            className="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                                            role="menuitem"
-                                        >
-                                            <Lock className="w-4 h-4 mr-3 text-gray-500 dark:text-gray-400" />
-                                            Privacy
-                                        </Link>
                                     </div>
 
-                                    {/* 3. Logout Button */}
                                     <div className="py-1">
                                         <button
                                             onClick={handleLogout}
@@ -175,7 +136,6 @@ export default function Navbar() {
                             )}
                         </div>
                     ) : (
-                        /* Login/Register Buttons (Unchanged) */
                         <div className="flex gap-2">
                             <Link
                                 to="/login"

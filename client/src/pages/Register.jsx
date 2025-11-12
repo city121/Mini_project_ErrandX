@@ -1,11 +1,10 @@
 import { useState } from "react";
-import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../context/AuthContext.jsx";
 
 export default function Register() {
-  const { login } = useAuth();
+  const { register } = useAuth(); // Use 'register' function from AuthContext
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -16,32 +15,23 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    try {
-      const { data } = await axios.post("http://localhost:5000/api/auth/register", {
-        name,
-        email,
-        password,
-      });
+    
+    // Use the register function from the AuthContext
+    const registrationSuccessful = await register(name, email, password); 
 
-      if (data.user) {
-        login(data.user);
-        setSuccess(true);
-        setTimeout(() => navigate("/tasks"), 1000);
-      } else {
-        alert("Unexpected response from server");
-      }
-    } catch (err) {
-      alert(err.response?.data?.message || "Registration failed");
-    } finally {
-      setLoading(false);
-    }
+    if (registrationSuccessful) {
+      setSuccess(true);
+      setTimeout(() => navigate("/tasks"), 1000);
+    } 
+    
+    setLoading(false); // setLoading(false) should always happen regardless of success/failure
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen 
-                    bg-gray-100 dark:bg-gray-900 
-                    text-gray-900 dark:text-gray-100 
-                    transition-colors duration-300">
+                     bg-gray-100 dark:bg-gray-900 
+                     text-gray-900 dark:text-gray-100 
+                     transition-colors duration-300">
       <AnimatePresence mode="wait">
         {!success ? (
           <motion.div
@@ -51,12 +41,12 @@ export default function Register() {
             exit={{ opacity: 0, y: -30 }}
             transition={{ duration: 0.4 }}
             className="bg-white dark:bg-gray-800 
-                       p-8 rounded-2xl shadow-lg w-full max-w-md 
-                       border border-gray-200 dark:border-gray-700 
-                       transition-colors duration-300"
+                        p-8 rounded-2xl shadow-lg w-full max-w-md 
+                        border border-gray-200 dark:border-gray-700 
+                        transition-colors duration-300"
           >
             <h2 className="text-3xl font-semibold text-center 
-                           text-green-600 dark:text-green-400 mb-6">
+                            text-green-600 dark:text-green-400 mb-6">
               Create Your Account 🌱
             </h2>
 
@@ -71,10 +61,10 @@ export default function Register() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 
-                             bg-white dark:bg-gray-700 
-                             text-gray-900 dark:text-white 
-                             placeholder-gray-500 dark:placeholder-gray-400 
-                             focus:ring-2 focus:ring-green-500 outline-none"
+                              bg-white dark:bg-gray-700 
+                              text-gray-900 dark:text-white 
+                              placeholder-gray-500 dark:placeholder-gray-400 
+                              focus:ring-2 focus:ring-green-500 outline-none"
                   required
                 />
               </div>
@@ -89,10 +79,10 @@ export default function Register() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 
-                             bg-white dark:bg-gray-700 
-                             text-gray-900 dark:text-white 
-                             placeholder-gray-500 dark:placeholder-gray-400 
-                             focus:ring-2 focus:ring-green-500 outline-none"
+                              bg-white dark:bg-gray-700 
+                              text-gray-900 dark:text-white 
+                              placeholder-gray-500 dark:placeholder-gray-400 
+                              focus:ring-2 focus:ring-green-500 outline-none"
                   required
                 />
               </div>
@@ -107,10 +97,10 @@ export default function Register() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 
-                             bg-white dark:bg-gray-700 
-                             text-gray-900 dark:text-white 
-                             placeholder-gray-500 dark:placeholder-gray-400 
-                             focus:ring-2 focus:ring-green-500 outline-none"
+                              bg-white dark:bg-gray-700 
+                              text-gray-900 dark:text-white 
+                              placeholder-gray-500 dark:placeholder-gray-400 
+                              focus:ring-2 focus:ring-green-500 outline-none"
                   required
                 />
               </div>
@@ -119,8 +109,8 @@ export default function Register() {
                 type="submit"
                 disabled={loading}
                 className="mt-2 bg-green-600 hover:bg-green-700 
-                           text-white font-semibold py-3 rounded-lg 
-                           transition-colors duration-300 disabled:opacity-70"
+                            text-white font-semibold py-3 rounded-lg 
+                            transition-colors duration-300 disabled:opacity-70"
               >
                 {loading ? "Registering..." : "Register"}
               </button>
@@ -144,9 +134,9 @@ export default function Register() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5, type: "spring" }}
             className="bg-white dark:bg-gray-800 
-                       p-10 rounded-2xl shadow-lg text-center 
-                       border border-gray-200 dark:border-gray-700
-                       transition-colors duration-300"
+                        p-10 rounded-2xl shadow-lg text-center 
+                        border border-gray-200 dark:border-gray-700
+                        transition-colors duration-300"
           >
             <h2 className="text-2xl font-bold text-green-600 dark:text-green-400 mb-2">
               🌟 Registration Successful!

@@ -27,10 +27,9 @@ export default function CreatorBadge() {
         
         {/* Updated List Display with 4 names */}
         <ol className="text-sm font-extrabold text-green-700 dark:text-green-300 leading-tight list-inside list-decimal pl-3 space-y-0">
-          <li>Muhammed Muqueeth Khan</li>
-          <li>Praveen Suthar</li>
-          <li>Fareeha Amin</li> {/* 🆕 Added name */}
-          <li>Anusha A</li>    {/* 🆕 Added name */}
+          
+                  <>Praveen Suthar</>
+              {/* 🆕 Added name */}
         </ol>
 
       </div>

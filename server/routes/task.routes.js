@@ -4,14 +4,17 @@ import * as taskController from "../controllers/task.controller.js";
 
 const router = express.Router();
 
-// All task routes are protected by the middleware
-router.get("/", protect, taskController.getTasks);
-router.get("/:id", protect, taskController.getTask);
-router.post("/", protect, taskController.createTask);
-router.put("/:id", protect, taskController.updateTask);
-router.delete("/:id", protect, taskController.deleteTask);
+// Apply 'protect' middleware to all task routes
+router.use(protect);
 
-router.put("/:id/claim", protect, taskController.claimTask);
-router.put("/:id/unclaim", protect, taskController.unclaimTask);
+router.get("/", taskController.getTasks);
+router.get("/:id", taskController.getTask);
+router.post("/", taskController.createTask);
+router.put("/:id", taskController.updateTask);
+router.delete("/:id", taskController.deleteTask);
+
+// Custom Claim/Unclaim routes
+router.put("/:id/claim", taskController.claimTask);
+router.put("/:id/unclaim", taskController.unclaimTask);
 
 export default router;
